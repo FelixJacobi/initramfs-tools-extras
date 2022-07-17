@@ -1,5 +1,5 @@
-initramfs-tools-extras (20220717-1) UNRELEASED; urgency=medium
+initramfs-tools-extras (20220717-1) unstable; urgency=medium
 
   * Initial Release.
 
- -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 17 Jul 2022 10:24:43 +0200
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 17 Jul 2022 10:32:18 +0200
