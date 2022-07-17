@@ -1,1 +1,4 @@
 X:LICENSE
+!:etc/*
+C:etc/initramfs-tools/* usr/share/initramfs-tools
+X:./.pc

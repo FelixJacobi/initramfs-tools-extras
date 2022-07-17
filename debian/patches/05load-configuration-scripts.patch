@@ -1,0 +1,76 @@
+Description: loads initramfs-tools configuration in scripts
+Author: Felix Jacobi <Felix@jacobi-hamburg.net>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: other
+Forwarded: no
+Last-Update: 2022-07-17
+
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/init-bottom/bond
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/init-bottom/bond
+@@ -13,6 +13,13 @@ case "$1" in
+ 		;;
+ esac
+ 
++# Bring in the main config (stolen from /usr/share/initramfs-tools/init)
++[ -f "/conf/initramfs.conf" ] && . /conf/initramfs.conf
++for conf in /conf/conf.d/*; do
++        [ -f "${conf}" ] && . "${conf}"
++done
++# End: Bring in the main config
++
+ if [ -z "$BOND" ]
+ then
+   exit 0
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/init-top/bond
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/init-top/bond
+@@ -16,6 +16,13 @@ esac
+ echo "Network interfaces loaded: "
+ echo `ls /sys/class/net`
+ 
++# Bring in the main config (stolen from /usr/share/initramfs-tools/init)
++[ -f "/conf/initramfs.conf" ] && . /conf/initramfs.conf
++for conf in /conf/conf.d/*; do
++        [ -f "${conf}" ] && . "${conf}"
++done
++# End: Bring in the main config
++
+ if [ -z "$BOND" ]
+ then
+   exit 0
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/init-top/vlan
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/init-top/vlan
+@@ -13,6 +13,13 @@ case "$1" in
+     ;;
+ esac
+ 
++# Bring in the main config (stolen from /usr/share/initramfs-tools/init)
++[ -f "/conf/initramfs.conf" ] && . /conf/initramfs.conf
++for conf in /conf/conf.d/*; do
++        [ -f "${conf}" ] && . "${conf}"
++done
++# End: Bring in the main config
++
+ if [ -z "$VLAN" ]
+ then
+   exit 0
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/local-bottom/vlan
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/local-bottom/vlan
+@@ -13,6 +13,13 @@ case "$1" in
+     ;;
+ esac
+ 
++# Bring in the main config (stolen from /usr/share/initramfs-tools/init)
++[ -f "/conf/initramfs.conf" ] && . /conf/initramfs.conf
++for conf in /conf/conf.d/*; do
++        [ -f "${conf}" ] && . "${conf}"
++done
++# End: Bring in the main config
++
+ if grep -q ^DROPBEAR_IFDOWN= /conf/initramfs.conf; then
+     # XXX backward compatibility; remove once Stretch is the current stable
+     . /conf/initramfs.conf

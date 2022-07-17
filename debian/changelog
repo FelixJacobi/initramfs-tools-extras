@@ -1,3 +1,12 @@
+initramfs-tools-extras (20220717-2) UNRELEASED; urgency=medium
+
+  * Moved scripts and hooks to /usr/share/initramfs-tools to make sure
+    triggers are working 
+  * Fixed setting configuration via /etc/initramfs-tools/conf.d
+  * Fixed several small bugs in upstream script
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 17 Jul 2022 12:17:21 +0200
+
 initramfs-tools-extras (20220717-1) unstable; urgency=medium
 
   * Initial Release.

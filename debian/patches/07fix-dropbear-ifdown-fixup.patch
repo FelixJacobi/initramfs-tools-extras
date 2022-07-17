@@ -1,0 +1,19 @@
+Description: Fixup for 06fix-dropbear-ifdown.patch
+Author: Felix Jacobi <Felix@jacobi-hamburg.net>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: other
+Forwarded: no
+Last-Update: 2022-07-17
+
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/local-bottom/vlan
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/local-bottom/vlan
+@@ -45,3 +45,4 @@ if [ "$BOOT" != nfs ] && [ "$IFDOWN" !=
+         ip link    delete dev "$IFACE"
+         log_end_msg
+     done
++fi

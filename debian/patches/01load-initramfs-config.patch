@@ -1,0 +1,44 @@
+Description: Load /etc/initramfs-tools/{initramfs.conf,conf.d} in hooks to access configuration variables
+Author: Felix Jacobi <Felix@jacobi-hamburg.net>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: other
+Forwarded: no
+Last-Update: 2022-07-17
+
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/hooks/bond
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/hooks/bond
+@@ -12,6 +12,13 @@ case $1 in
+ 		;;
+ esac
+ 
++# Bring in the main config (stolen from /usr/share/initramfs-tools/init)
++[ -f "/etc/initramfs-tools/initramfs.conf" ] && . /etc/initramfs-tools/initramfs.conf
++for conf in /etc/initramfs-tools/conf.d/*; do
++        [ -f "${conf}" ] && . "${conf}"
++done
++# End: Bring in the main config
++
+ . /usr/share/initramfs-tools/hook-functions
+ # Begin real processing below this line
+ 
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/hooks/vlan
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/hooks/vlan
+@@ -12,6 +12,13 @@ prereqs)
+      ;;
+ esac
+ 
++# Bring in the main config (stolen from /usr/share/initramfs-tools/init)
++[ -f "/etc/initramfs-tools/initramfs.conf" ] && . /etc/initramfs-tools/initramfs.conf
++for conf in /etc/initramfs-tools/conf.d/*; do
++        [ -f "${conf}" ] && . "${conf}"
++done
++# End: Bring in the main config
++
+ . /usr/share/initramfs-tools/hook-functions
+ # Begin real processing below this line
+ 

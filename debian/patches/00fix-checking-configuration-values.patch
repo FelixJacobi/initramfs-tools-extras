@@ -1,0 +1,54 @@
+Description: The hooks are grepping in the configuration file which breaks when
+ setting variables via /etc/initramfs-tools/conf.d. There is no need to do that
+ as the variables are exposed via environment and we can check there instead.
+Author: Felix Jacobi <Felix@jacobi-hamburg.net>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: other
+Forwarded: no
+Last-Update: 2022-07-17
+
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/hooks/vlan
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/hooks/vlan
+@@ -15,6 +15,7 @@ esac
+ . /usr/share/initramfs-tools/hook-functions
+ # Begin real processing below this line
+ 
+-if grep -q ^VLAN= /etc/initramfs-tools/initramfs.conf; then
++if [ -n "$VLAN" ]
++then
+     manual_add_modules 8021q
+ fi
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/init-bottom/bond
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/init-bottom/bond
+@@ -13,8 +13,9 @@ case "$1" in
+ 		;;
+ esac
+ 
+-if grep -q ^BOND= /conf/initramfs.conf; then
+-	. /conf/initramfs.conf
++if [ -z "$BOND" ]
++then
++  exit 0
+ fi
+ 
+ for BOND_IFACE in ${BOND:-*}; do
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/init-top/vlan
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/init-top/vlan
+@@ -13,9 +13,9 @@ case "$1" in
+     ;;
+ esac
+ 
+-if grep -q ^VLAN= /conf/initramfs.conf; then
+-    . /conf/initramfs.conf
+-    modprobe 8021q
++if [ -z "$VLAN" ]
++then
++  exit 0
+ fi
+ 
+ for VLAN_IFACE in ${VLAN:-*}; do

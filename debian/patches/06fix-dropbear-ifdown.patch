@@ -1,0 +1,48 @@
+Description: Fixes setting down and deleting VLAN interface
+Author: Felix Jacobi <Felix@jacobi-hamburg.net>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: other
+Forwarded: no
+Last-Update: 2022-07-17
+
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/local-bottom/vlan
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/local-bottom/vlan
+@@ -13,6 +13,8 @@ case "$1" in
+     ;;
+ esac
+ 
++. /scripts/functions
++
+ # Bring in the main config (stolen from /usr/share/initramfs-tools/init)
+ [ -f "/conf/initramfs.conf" ] && . /conf/initramfs.conf
+ for conf in /conf/conf.d/*; do
+@@ -29,9 +31,17 @@ if [ -e /etc/dropbear/config ]; then
+     . /etc/dropbear/config
+ fi
+ 
+-[ "$IFDOWN" != none ] || exit 0
+-for IFACE in ${IFDOWN:-*}; do
+-    if ip link | grep -q "$IFACE@"; then
+-        ip link delete "$IFACE"
+-    fi
+-done
++# Taken from /usr/share/initramfs-tools/scripts/init-bottom/dropbear
++if [ "$BOOT" != nfs ] && [ "$IFDOWN" != none ]; then
++    for IFACE in /sys/class/net/$IFDOWN; do
++        [ -e "$IFACE" ] || continue
++        IFACE="${IFACE#/sys/class/net/}"
++        [ -e "/proc/net/vlan/$IFACE" ] || continue
++        grep -q " VID: " "/proc/net/vlan/$IFACE" || continue
++        log_begin_msg "Bringing down $IFACE"
++        ip link    set   dev "$IFACE" down
++        ip address flush dev "$IFACE"
++        ip route   flush dev "$IFACE"
++        ip link    delete dev "$IFACE"
++        log_end_msg
++    done
++fi

@@ -1,0 +1,64 @@
+Description: Removes broken default wildcard which leads to all filesystem
+ being globbed, added explicit modprobe calls, fixed reading config for
+ bonding
+Author: Felix Jacobi <Felix@jacobi-hamburg.net>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: other 
+Forwarded: no
+Last-Update: 2022-07-17
+
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/init-bottom/bond
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/init-bottom/bond
+@@ -18,7 +18,7 @@ then
+   exit 0
+ fi
+ 
+-for BOND_IFACE in ${BOND:-*}; do
++for BOND_IFACE in ${BOND}; do
+ 	BOND_DEVICE=$(echo $BOND_IFACE | cut -d":" -f1)
+ 	BOND_SLAVES=$(echo $BOND_IFACE | cut -d":" -f2 | sed "s/,/ /g" )
+ 	echo "Unloading bond interface: $BOND_DEVICE"
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/init-top/bond
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/init-top/bond
+@@ -13,15 +13,17 @@ case "$1" in
+ 		;;
+ esac
+ 
+-if grep -q ^BOND= /conf/initramfs.conf; then
+-	. /conf/initramfs.conf
+-	modprobe bonding $BOND_MODE
+-fi
+-
+ echo "Network interfaces loaded: "
+ echo `ls /sys/class/net`
+ 
+-for BOND_IFACE in ${BOND:-*}; do
++if [ -z "$BOND" ]
++then
++  exit 0
++fi
++
++modprobe bonding $BOND_MODE
++
++for BOND_IFACE in ${BOND:-}; do
+ 	BOND_DEVICE=$(echo $BOND_IFACE | cut -d":" -f1)
+ 	BOND_SLAVES=$(echo $BOND_IFACE | cut -d":" -f2 | sed "s/,/ /g")
+ 	echo "+$BOND_DEVICE" > /sys/class/net/bonding_masters
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/scripts/init-top/vlan
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/scripts/init-top/vlan
+@@ -18,7 +18,9 @@ then
+   exit 0
+ fi
+ 
+-for VLAN_IFACE in ${VLAN:-*}; do
++modprobe 8021q
++
++for VLAN_IFACE in ${VLAN}; do
+     SOURCE_IFACE=$(echo $VLAN_IFACE | cut -d":" -f1)
+     VLAN_ID=$(echo $VLAN_IFACE | cut -d":" -f2)
+     ip link add link $SOURCE_IFACE name $SOURCE_IFACE.$VLAN_ID type vlan id $VLAN_ID

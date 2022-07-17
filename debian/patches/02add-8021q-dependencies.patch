@@ -1,0 +1,25 @@
+Description: Adds dependencies of 8021q kernel module to initramfs
+Author: Felix Jacobi <Felix@jacobi-hamburg.net>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: other
+Forwarded: no
+Last-Update: 2022-07-17
+
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/hooks/vlan
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/hooks/vlan
+@@ -25,4 +25,10 @@ done
+ if [ -n "$VLAN" ]
+ then
+     manual_add_modules 8021q
++    # deps of 8021q
++    manual_add_modules garp
++    manual_add_modules mrp
++    manual_add_modules stp
++    manual_add_modules llc
++    # End: deps of 8021q
+ fi

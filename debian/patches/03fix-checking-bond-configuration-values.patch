@@ -1,0 +1,23 @@
+Description: Same as 00fix-checking-configuration-values.patch, but for bond
+ hook
+Author: Felix Jacobi <Felix@jacobi-hamburg.net>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: other
+Forwarded: no
+Last-Update: 2022-07-17
+
+--- initramfs-tools-extras-20220717.orig/etc/initramfs-tools/hooks/bond
++++ initramfs-tools-extras-20220717/etc/initramfs-tools/hooks/bond
+@@ -22,6 +22,6 @@ done
+ . /usr/share/initramfs-tools/hook-functions
+ # Begin real processing below this line
+ 
+-if grep -q ^BOND= /etc/initramfs-tools/initramfs.conf; then
++if [ -n "$BOND" ]; then
+ 	manual_add_modules bonding
+ fi
