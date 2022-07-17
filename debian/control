@@ -1,0 +1,20 @@
+Source: initramfs-tools-extras
+Section: misc
+Priority: optional
+Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.4.1
+Homepage: https://github.com/Deltik/initramfs-tools-extras
+Rules-Requires-Root: no
+Vcs-Git: https://github.com/FelixJacobi/initramfs-tools-extras.git
+Vcs-Browser: https://github.com/FelixJacobi/initramfs-tools-extras
+
+Package: initramfs-tools-extras
+Architecture: all
+Depends: ${misc:Depends},
+ ${perl:Depends},
+ initramfs-tools,
+Description: Extra Features for initramfs-tools
+ You can add these hooks and scripts to your initramfs-tools to have support for
+ bond interfaces or VLAN interfaces during boot. After installing bonding and
+ VLANs options can be added to your /etc/initramfs-tools/initramfs.conf.
